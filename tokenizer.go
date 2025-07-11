@@ -64,7 +64,7 @@ package tokenizer
 //
 //	import (
 //		"fmt"
-//		"github.com/tiktoken-go/tokenizer"
+//		"github.com/awee-ai/go-tokenizer"
 //	)
 //
 //	func main() {
@@ -86,7 +86,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/tiktoken-go/tokenizer/codec"
+	"github.com/awee-ai/go-tokenizer/codec"
 )
 
 var (

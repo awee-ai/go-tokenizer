@@ -1,4 +1,4 @@
-module github.com/tiktoken-go/tokenizer
+module github.com/awee-ai/go-tokenizer
 
 go 1.23
 

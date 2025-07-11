@@ -3,7 +3,7 @@ package tokenizer_test
 import (
 	"testing"
 
-	"github.com/tiktoken-go/tokenizer"
+	"github.com/awee-ai/go-tokenizer"
 )
 
 type testCase struct {

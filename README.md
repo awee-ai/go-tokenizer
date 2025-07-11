@@ -1,6 +1,6 @@
 # Tokenizer
 
-Fork of github.com/tiktoken-go/tokenizer with (currently WIP) incorrect Ollama model tokenizer mappings.
+Fork of github.com/awee-ai/go-tokenizer with (currently WIP) incorrect Ollama model tokenizer mappings.
 
 Maybe something will get done here.
 
