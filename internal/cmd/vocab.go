@@ -72,8 +72,13 @@ func generateVocabulary(w io.Writer, mapName string, uri string) {
 	fmt.Fprintf(w, "%s = vocab{\n", mapName)
 
 	scanner := bufio.NewScanner(resp.Body)
+	first := true
 	for scanner.Scan() {
 		line := scanner.Text()
+		if first && strings.Contains(line, "#version") {
+			first = false
+			continue // skip the version line
+		}
 
 		wordInput, idInput, ok := strings.Cut(line, " ")
 		if !ok {
@@ -122,6 +127,30 @@ func getConfig(encoding string) config {
 			url:      "https://openaipublic.blob.core.windows.net/encodings/p50k_base.tiktoken",
 			filename: "p50k_base_vocab.go",
 		}
+	case "llama":
+		return config{
+			mapName:  "llamaBaseVocab",
+			url:      "https://raw.githubusercontent.com/meta-llama/llama-models/refs/heads/main/models/llama3/tokenizer.model",
+			filename: "llama_base_vocab.go",
+		}
+	case "gpt2":
+		return config{
+			mapName:  "gpt2BaseVocab",
+			url:      "https://openaipublic.blob.core.windows.net/encodings/r50k_base.tiktoken",
+			filename: "gpt2_base_vocab.go",
+		}
+	// case "sentencepiece":
+	// 	return config{
+	// 		mapName:  "sentencePieceVocab",
+	// 		url:      "https://github.com/google/gemma_pytorch/raw/refs/heads/main/tokenizer/tokenizer.model",
+	// 		filename: "sentencepiece_vocab.go",
+	// 	}
+	// case "bert":
+	// 	return config{
+	// 		mapName:  "bertVocab",
+	// 		url:      "https://raw.githubusercontent.com/google-research/bert/master/vocab.txt",
+	// 		filename: "bert_vocab.go",
+	// 	}
 	default:
 		log.Fatal("config not found")
 		return config{}
