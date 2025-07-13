@@ -158,6 +158,19 @@ const (
 	OllamaLlamaBase Encoding = "llama"       // LLaMA3 tokenizer (BPE, 200k vocab, used by LLama3+ models)
 )
 
+// DeepSeek family - custom tokenizer but GPT-2 style BPE, vocab >100k
+var deepSeekModels = map[string]Encoding{
+	"deepseek-r1":       R50kBase, // Fallback to GPT-2 style, vocab size will be different
+	"deepseek-v3":       R50kBase,
+	"deepseek-v2.5":     R50kBase,
+	"deepseek-v2":       R50kBase,
+	"deepseek-coder-v2": R50kBase,
+	"deepseek-coder":    R50kBase,
+	"deepseek-llm":      R50kBase,
+	"deepcoder":         R50kBase,
+	"deepscaler":        R50kBase,
+}
+
 var definitiveTokenizerFamilies = map[string]Encoding{
 	"o1-": O200kBase,
 	"o3-": O200kBase,
@@ -174,19 +187,6 @@ var definitiveTokenizerFamilies = map[string]Encoding{
 	"ft:gpt-3.5-turbo": Cl100kBase,
 	"ft:davinci-002":   Cl100kBase,
 	"ft:babbage-002":   Cl100kBase,
-}
-
-// DeepSeek family - custom tokenizer but GPT-2 style BPE, vocab >100k
-var deepSeekModels = map[string]Encoding{
-	"deepseek-r1":       R50kBase, // Fallback to GPT-2 style, vocab size will be different
-	"deepseek-v3":       R50kBase,
-	"deepseek-v2.5":     R50kBase,
-	"deepseek-v2":       R50kBase,
-	"deepseek-coder-v2": R50kBase,
-	"deepseek-coder":    R50kBase,
-	"deepseek-llm":      R50kBase,
-	"deepcoder":         R50kBase,
-	"deepscaler":        R50kBase,
 }
 
 // Llama family - complex because Llama 2 vs 3+ have different tokenizers
@@ -216,6 +216,21 @@ var qwenModels = map[string]Encoding{
 	"qwen2-math":    R50kBase,
 	"qwq":           R50kBase,
 	"codeqwen":      R50kBase,
+}
+
+var claudeModels = map[string]Encoding{
+	"claude-2.0": Cl100kBase,
+	"claude-2.1": Cl100kBase,
+
+	"claude-3-opus-":     Cl100kBase,
+	"claude-3-sonnet-":   Cl100kBase,
+	"claude-3-5-sonnet-": Cl100kBase,
+	"claude-3-haiku-":    Cl100kBase,
+	"claude-3-5-haiku-":  Cl100kBase,
+	"claude-3-7-sonnet-": Cl100kBase,
+
+	"claude-opus-4":   Cl100kBase,
+	"claude-sonnet-4": Cl100kBase,
 }
 
 // Mistral family - mixed tokenizers (older=SentencePiece, newer=Tekken/tiktoken)
@@ -409,6 +424,9 @@ func buildModelPrefixToEncoding() map[string]Encoding {
 
 	// Add all maps in order of priority (more specific to less specific)
 	for k, v := range definitiveTokenizerFamilies {
+		result[k] = v
+	}
+	for k, v := range claudeModels {
 		result[k] = v
 	}
 	for k, v := range deepSeekModels {
