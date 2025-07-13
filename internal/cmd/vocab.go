@@ -57,11 +57,24 @@ func generatePreamble(w io.Writer, encoding string) {
 }
 
 func generateVocabulary(w io.Writer, mapName string, uri string) {
-	resp, err := http.Get(uri)
-	if err != nil {
-		log.Fatalf("error fetching file: %v", err)
+	var respBody io.Reader
+	if strings.HasPrefix(uri, "file:") {
+		filePath := strings.TrimPrefix(uri, "file:")
+		file, err := os.Open(filePath)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		defer file.Close()
+		respBody = file
+	} else {
+		respBody = nil // will be set by http.Get
+		resp, err := http.Get(uri)
+		if err != nil {
+			log.Fatalf("error fetching file: %v", err)
+		}
+		respBody = resp.Body
+		defer resp.Body.Close()
 	}
-	defer resp.Body.Close()
 
 	fmt.Fprintf(w, "import \"sync\"\n")
 	fmt.Fprintf(w, "var (\n")
@@ -71,7 +84,7 @@ func generateVocabulary(w io.Writer, mapName string, uri string) {
 	fmt.Fprintf(w, "func %sInit() {\n", mapName)
 	fmt.Fprintf(w, "%s = vocab{\n", mapName)
 
-	scanner := bufio.NewScanner(resp.Body)
+	scanner := bufio.NewScanner(respBody)
 	first := true
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -138,6 +151,13 @@ func getConfig(encoding string) config {
 			mapName:  "gpt2BaseVocab",
 			url:      "https://openaipublic.blob.core.windows.net/encodings/r50k_base.tiktoken",
 			filename: "gpt2_base_vocab.go",
+		}
+	case "anthropic":
+		return config{
+			mapName: "anthropicVocab",
+			// https://huggingface.co/Xenova/claude-tokenizer/blob/main/tokenizer.json
+			url:      "file:internal/anthropic/anthropic.tiktoken",
+			filename: "anthropic_base_vocab.go",
 		}
 	// case "sentencepiece":
 	// 	return config{

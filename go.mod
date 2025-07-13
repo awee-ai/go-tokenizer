@@ -1,6 +1,8 @@
 module github.com/awee-ai/go-tokenizer
 
-go 1.23
+go 1.23.0
+
+toolchain go1.24.0
 
 tool github.com/dlclark/regexp2cg
 

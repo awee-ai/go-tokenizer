@@ -144,7 +144,6 @@ const (
 	CodeSearchAdaCode001     Model = "code-search-ada-code-001"
 	TextDavinciEdit001       Model = "text-davinci-edit-001"
 	CodeDavinciEdit001       Model = "code-davinci-edit-001"
-	GPT2                     Model = "gpt2"
 )
 
 type Encoding string
@@ -156,6 +155,7 @@ const (
 	Cl100kBase      Encoding = "cl100k_base" // GPT-4/GPT-3.5 Turbo tokenizer (100k BPE)
 	O200kBase       Encoding = "o200k_base"  // OpenAI 200k tokenizer (e.g. GPT-4o, o1, o3)
 	OllamaLlamaBase Encoding = "llama"       // LLaMA3 tokenizer (BPE, 200k vocab, used by LLama3+ models)
+	AnthropicBase   Encoding = "anthropic"   // Anthropic tokenizer (Claude family, 100k vocab)
 )
 
 // DeepSeek family - custom tokenizer but GPT-2 style BPE, vocab >100k
@@ -222,15 +222,15 @@ var claudeModels = map[string]Encoding{
 	"claude-2.0": Cl100kBase,
 	"claude-2.1": Cl100kBase,
 
-	"claude-3-opus-":     Cl100kBase,
-	"claude-3-sonnet-":   Cl100kBase,
-	"claude-3-5-sonnet-": Cl100kBase,
-	"claude-3-haiku-":    Cl100kBase,
-	"claude-3-5-haiku-":  Cl100kBase,
-	"claude-3-7-sonnet-": Cl100kBase,
+	"claude-3-opus-":     AnthropicBase,
+	"claude-3-sonnet-":   AnthropicBase,
+	"claude-3-5-sonnet-": AnthropicBase,
+	"claude-3-haiku-":    AnthropicBase,
+	"claude-3-5-haiku-":  AnthropicBase,
+	"claude-3-7-sonnet-": AnthropicBase,
 
-	"claude-opus-4":   Cl100kBase,
-	"claude-sonnet-4": Cl100kBase,
+	"claude-opus-4":   AnthropicBase,
+	"claude-sonnet-4": AnthropicBase,
 }
 
 // Mistral family - mixed tokenizers (older=SentencePiece, newer=Tekken/tiktoken)
