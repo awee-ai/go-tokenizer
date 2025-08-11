@@ -32,7 +32,6 @@ func (c *Codec) Count(input string) (int, error) {
 
 // Encode returns the token IDs and tokens for the input string.
 func (c *Codec) Encode(input string) ([]uint, []string, error) {
-
 	var ids []uint
 	var tokens []string
 

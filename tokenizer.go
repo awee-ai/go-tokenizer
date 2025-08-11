@@ -155,7 +155,32 @@ const (
 	Cl100kBase      Encoding = "cl100k_base" // GPT-4/GPT-3.5 Turbo tokenizer (100k BPE)
 	O200kBase       Encoding = "o200k_base"  // OpenAI 200k tokenizer (e.g. GPT-4o, o1, o3)
 	OllamaLlamaBase Encoding = "llama"       // LLaMA3 tokenizer (BPE, 200k vocab, used by LLama3+ models)
-	AnthropicBase   Encoding = "anthropic"   // Anthropic tokenizer (Claude family, 100k vocab)
+
+	// r50k_base
+	// expected: 91
+	// actual: 79
+
+	// p50k_base
+	// expected: 91
+	// actual: 78
+
+	// p50k_edit
+	// expected: 91
+	// actual: 78
+
+	// cl100k_base
+	// expected: 91
+	// actual: 80
+
+	// o200k_base
+	// expected: 91
+	// actual: 78
+
+	// llama
+	// expected: 91
+	// actual: 80
+
+	AnthropicBase Encoding = "cl100k_base" // Anthropic tokenizer (Claude family, 100k vocab)
 )
 
 // DeepSeek family - custom tokenizer but GPT-2 style BPE, vocab >100k
@@ -172,9 +197,10 @@ var deepSeekModels = map[string]Encoding{
 }
 
 var definitiveTokenizerFamilies = map[string]Encoding{
-	"o1-": O200kBase,
-	"o3-": O200kBase,
-	"o4-": O200kBase,
+	"gpt-5": O200kBase,
+	"o1-":   O200kBase,
+	"o3-":   O200kBase,
+	"o4-":   O200kBase,
 	// chat
 	"chatgpt-4o-":    O200kBase,
 	"gpt-4.1-":       O200kBase,
@@ -222,6 +248,9 @@ var claudeModels = map[string]Encoding{
 	"claude-2.0": Cl100kBase,
 	"claude-2.1": Cl100kBase,
 
+	// Cl100kBase
+	// expected: 49
+	// actual  : 41
 	"claude-3-opus-":     AnthropicBase,
 	"claude-3-sonnet-":   AnthropicBase,
 	"claude-3-5-sonnet-": AnthropicBase,
@@ -231,6 +260,18 @@ var claudeModels = map[string]Encoding{
 
 	"claude-opus-4":   AnthropicBase,
 	"claude-sonnet-4": AnthropicBase,
+
+	//
+	//
+	// "claude-3-opus-":     R50kBase,
+	// "claude-3-sonnet-":   R50kBase,
+	// "claude-3-5-sonnet-": R50kBase,
+	// "claude-3-haiku-":    R50kBase,
+	// "claude-3-5-haiku-":  R50kBase,
+	// "claude-3-7-sonnet-": R50kBase,
+	//
+	// "claude-opus-4":   R50kBase,
+	// "claude-sonnet-4": R50kBase,
 }
 
 // Mistral family - mixed tokenizers (older=SentencePiece, newer=Tekken/tiktoken)
@@ -489,6 +530,9 @@ func Get(encoding Encoding) (Codec, error) {
 		return codec.NewP50kEdit(), nil
 	case OllamaLlamaBase:
 		return codec.NewLLama3Base(), nil
+	// large margin of error
+	// case AnthropicBase:
+	// 	return codec.NewAnthropicBase(), nil
 	default:
 		return nil, ErrEncodingNotSupported
 	}
@@ -523,9 +567,31 @@ func ForModel(model Model) (Codec, error) {
 	default:
 		for prefix, enc := range modelPrefixToEncoding {
 			if strings.HasPrefix(string(model), string(prefix)) {
+				// panic("found prefix: " + prefix + " for model: " + string(model))
 				return Get(enc)
 			}
 		}
 		return nil, ErrModelNotSupported
 	}
+}
+
+func Count(model Model, input string) (int, error) {
+	enc, err := ForModel(model)
+	if err != nil {
+		return 0, err
+	}
+	count, err := enc.Count(input)
+	if err != nil {
+		return 0, err
+	}
+
+	// account ratios
+	for prefix, ratio := range Ratios {
+		if strings.HasPrefix(string(model), string(prefix)) {
+			count = int(float64(count) * ratio)
+			break
+		}
+	}
+
+	return count, err
 }
