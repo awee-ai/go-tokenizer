@@ -593,5 +593,5 @@ func Count(model Model, input string) (int, error) {
 		}
 	}
 
-	return count, err
+	return count, nil
 }

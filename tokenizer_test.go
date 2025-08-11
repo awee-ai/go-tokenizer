@@ -143,7 +143,8 @@ func Test_AnthropicModel_TokenCounts(t *testing.T) {
 			req.Header.Add("x-api-key", key)
 			req.Header.Add("Content-Type", "application/json")
 
-			res, _ := http.DefaultClient.Do(req)
+			res, err := http.DefaultClient.Do(req)
+			assert.NoError(t, err, "failed to send HTTP request")
 
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
