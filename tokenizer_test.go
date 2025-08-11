@@ -176,6 +176,18 @@ func Test_Model_TokenCount(t *testing.T) {
 			text:                "This tool uses Anthropic's newly released token counting api to count the number of tokens in a given text. Beware of existing tokenizers which are not accurate. Explore the source code here.",
 			expectedRemoteCount: 45,
 		},
+		{
+			name:                "gemini-1.5-pro",
+			model:               "gemini-1.5-pro",
+			text:                "This tool uses Anthropic's newly released token counting api to count the number of tokens in a given text. Beware of existing tokenizers which are not accurate. Explore the source code here.",
+			expectedRemoteCount: 39,
+		},
+		{
+			name:                "gemma-3-4b",
+			model:               "gemma-3-4b",
+			text:                "This tool uses Anthropic's newly released token counting api to count the number of tokens in a given text. Beware of existing tokenizers which are not accurate. Explore the source code here.",
+			expectedRemoteCount: 38,
+		},
 	}
 
 	for _, tt := range tests {

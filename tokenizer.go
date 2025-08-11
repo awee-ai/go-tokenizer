@@ -155,7 +155,9 @@ const (
 	Cl100kBase      Encoding = "cl100k_base" // GPT-4/GPT-3.5 Turbo tokenizer (100k BPE)
 	O200kBase       Encoding = "o200k_base"  // OpenAI 200k tokenizer (e.g. GPT-4o, o1, o3)
 	OllamaLlamaBase Encoding = "llama"       // LLaMA3 tokenizer (BPE, 200k vocab, used by LLama3+ models)
-
+	AnthropicBase   Encoding = "cl100k_base" // Anthropic tokenizer (Claude family, 100k vocab)
+	GeminiBase      Encoding = "cl100k_base" // Gemini tokenizer (200k vocab, tiktoken-compatible)
+	// anthropic tests
 	// r50k_base
 	// expected: 91
 	// actual: 79
@@ -180,7 +182,6 @@ const (
 	// expected: 91
 	// actual: 80
 
-	AnthropicBase Encoding = "cl100k_base" // Anthropic tokenizer (Claude family, 100k vocab)
 )
 
 // DeepSeek family - custom tokenizer but GPT-2 style BPE, vocab >100k
@@ -260,18 +261,6 @@ var claudeModels = map[string]Encoding{
 
 	"claude-opus-4":   AnthropicBase,
 	"claude-sonnet-4": AnthropicBase,
-
-	//
-	//
-	// "claude-3-opus-":     R50kBase,
-	// "claude-3-sonnet-":   R50kBase,
-	// "claude-3-5-sonnet-": R50kBase,
-	// "claude-3-haiku-":    R50kBase,
-	// "claude-3-5-haiku-":  R50kBase,
-	// "claude-3-7-sonnet-": R50kBase,
-	//
-	// "claude-opus-4":   R50kBase,
-	// "claude-sonnet-4": R50kBase,
 }
 
 // Mistral family - mixed tokenizers (older=SentencePiece, newer=Tekken/tiktoken)
@@ -297,6 +286,11 @@ var gemmaModels = map[string]Encoding{
 	"gemma2":    R50kBase, // MIGRATION: Should be SentencePiece
 	"gemma":     R50kBase, // MIGRATION: Should be SentencePiece
 	"codegemma": R50kBase, // MIGRATION: Should be SentencePiece
+}
+
+var geminiModels = map[string]Encoding{
+	"gemini-": GeminiBase,
+	// "gemini-": R50kBase,
 }
 
 // Phi family - tokenizer changed between versions
@@ -483,6 +477,9 @@ func buildModelPrefixToEncoding() map[string]Encoding {
 		result[k] = v
 	}
 	for k, v := range gemmaModels {
+		result[k] = v
+	}
+	for k, v := range geminiModels {
 		result[k] = v
 	}
 	for k, v := range phiModels {
